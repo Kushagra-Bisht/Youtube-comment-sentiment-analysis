@@ -67,7 +67,7 @@ model, vectorizer = load_model_and_vectorizer("yt_chrome_plugin_model", "1", "./
 def home():
     return "Welcome to the flask api"
 
-import traceback
+import pandas as pd
 
 @app.route('/predict_with_timestamps', methods=['POST'])
 def predict_with_timestamps():
@@ -78,6 +78,7 @@ def predict_with_timestamps():
         return jsonify({"error": "No comments provided"}), 400
 
     try:
+        # Extract comments and timestamps
         comments = [item['text'] for item in comments_data]
         timestamps = [item['timestamp'] for item in comments_data]
 
@@ -86,19 +87,17 @@ def predict_with_timestamps():
         
         # Transform comments using the vectorizer
         transformed_comments = vectorizer.transform(preprocessed_comments)
-        
+
+        # Convert sparse matrix to dense and then to DataFrame
+        transformed_comments_df = pd.DataFrame(transformed_comments.toarray(), columns=vectorizer.get_feature_names_out())
+
         # Make predictions
-        predictions = model.predict(transformed_comments).tolist()  # Convert to list
+        predictions = model.predict(transformed_comments_df).tolist()  # Convert to list
         
         # Convert predictions to strings for consistency
         predictions = [str(pred) for pred in predictions]
     except Exception as e:
-        # Log the error and traceback
-        error_message = f"Prediction failed: {str(e)}"
-        traceback_str = traceback.format_exc()
-        print(error_message)
-        print(traceback_str)
-        return jsonify({"error": error_message, "trace": traceback_str}), 500
+        return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
     
     # Return the response with original comments, predicted sentiments, and timestamps
     response = [{"comment": comment, "sentiment": sentiment, "timestamp": timestamp} for comment, sentiment, timestamp in zip(comments, predictions, timestamps)]
@@ -119,9 +118,11 @@ def predict():
         
         # Transform comments using the vectorizer
         transformed_comments = vectorizer.transform(preprocessed_comments)
-        
+
+        transformed_comments_df = pd.DataFrame(transformed_comments.toarray(), columns=vectorizer.get_feature_names_out())
+
         # Make predictions
-        predictions = model.predict(transformed_comments).tolist()  # Convert to list
+        predictions = model.predict(transformed_comments_df).tolist()  # Convert to list
         
         # Convert predictions to strings for consistency
         predictions = [str(pred) for pred in predictions]
