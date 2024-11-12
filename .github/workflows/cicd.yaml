@@ -5,6 +5,8 @@ on: push
 jobs:
   model-deployment:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Gives the job permission to push changes
 
     steps:
       - name: Checkout code
@@ -39,7 +41,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: us-east-1  # Replace with your AWS region
+          AWS_DEFAULT_REGION: us-east-1
         run: |
           dvc push
 
@@ -60,7 +62,7 @@ jobs:
       - name: Push changes
         if: ${{ github.actor != 'github-actions[bot]' }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
         run: |
           git push origin ${{ github.ref_name }}
 
@@ -106,10 +108,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-east-1
         run: |
-          nohup python flask_app/app.py &
+          nohup python flask_app/app.py &  # May not persist between steps
 
       - name: Run Flask API tests
         run: |
           pytest scripts/test_flask_api.py
-
-      
