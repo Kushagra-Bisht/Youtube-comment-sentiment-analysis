@@ -67,6 +67,8 @@ model, vectorizer = load_model_and_vectorizer("yt_chrome_plugin_model", "1", "./
 def home():
     return "Welcome to the flask api"
 
+import traceback
+
 @app.route('/predict_with_timestamps', methods=['POST'])
 def predict_with_timestamps():
     data = request.json
@@ -91,11 +93,17 @@ def predict_with_timestamps():
         # Convert predictions to strings for consistency
         predictions = [str(pred) for pred in predictions]
     except Exception as e:
-        return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
+        # Log the error and traceback
+        error_message = f"Prediction failed: {str(e)}"
+        traceback_str = traceback.format_exc()
+        print(error_message)
+        print(traceback_str)
+        return jsonify({"error": error_message, "trace": traceback_str}), 500
     
     # Return the response with original comments, predicted sentiments, and timestamps
     response = [{"comment": comment, "sentiment": sentiment, "timestamp": timestamp} for comment, sentiment, timestamp in zip(comments, predictions, timestamps)]
     return jsonify(response)
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
