@@ -17,6 +17,26 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from mlflow.tracking import MlflowClient
 import matplotlib.dates as mdates
+import logging
+
+# Create a logger object
+logger = logging.getLogger(__name__)
+
+# Set the log level to DEBUG so we can see all levels of logs (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+logger.setLevel(logging.DEBUG)
+
+# Create a console handler to output logs to the console (GitHub Actions will capture this)
+console_handler = logging.StreamHandler()
+
+# Create a formatter for the log messages
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Set the formatter for the handler
+console_handler.setFormatter(formatter)
+
+# Add the handler to the logger
+logger.addHandler(console_handler)
+
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
