@@ -2,21 +2,12 @@ import requests
 import json
 
 # The base URL of your Flask application
-url = "http://127.0.0.1:5000/predict_with_timestamps"
+url = "http://127.0.0.1:5000/predict"
 
 # Example data in the correct format
 data = {
-    "comments": [
-        {
-            "text": "This is a great product!",
-            "timestamp": "2024-11-12T12:17:00"
-        },
-        {
-            "text": "Not satisfied with the service.",
-            "timestamp": "2024-11-12T12:18:00"
-        }
-    ]
-}
+        "comments": ["This is a great product!", "Not worth the money.", "It's okay."]
+    }
 
 # Send a POST request
 response = requests.post(url, json=data)
