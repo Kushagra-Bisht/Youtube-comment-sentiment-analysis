@@ -2,7 +2,7 @@ import pytest
 import requests
 import json
 
-BASE_URL = "http://127.0.0.1:5000"  # Replace with your deployed URL if needed
+BASE_URL = "http://localhost:5000"# Replace with your deployed URL if needed
 
 def test_predict_endpoint():
     data = {
@@ -19,6 +19,7 @@ def test_predict_with_timestamps_endpoint():
             {"text": "Could be better.", "timestamp": "2024-10-26 14:00:00"}
         ]
     }
+
     response = requests.post(f"{BASE_URL}/predict_with_timestamps", json=data)
     assert response.status_code == 200
     assert all('sentiment' in item for item in response.json())
