@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
@@ -9,6 +9,8 @@ COPY flask_app/ /app/
 COPY tfidf_vectorizer.pkl /app/tfidf_vectorizer.pkl
 
 RUN pip install -r requirements.txt
+
+RUN pip install boto3 lightgbm==4.5.0 cffi==1.17.1 psutil==6.1.0
 
 RUN python -m nltk.downloader stopwords wordnet
 

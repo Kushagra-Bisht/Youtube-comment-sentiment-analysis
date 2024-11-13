@@ -13,6 +13,9 @@ import numpy as np
 import joblib
 import re
 import pandas as pd
+import nltk
+nltk.download('stopwords')
+nltk.download('wordnet')
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from mlflow.tracking import MlflowClient
